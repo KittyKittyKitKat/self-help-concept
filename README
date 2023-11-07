@@ -1,0 +1,2 @@
+Make sure you set up a Python 3.12.x virtual environment, and use `pip install -r requirements.txt` to set everything up
+Use `flask run --debug` to run the site in debug mode locally on `localhost:5000`. Make sure you're in the same directory as `wsgi.py` when you do this. The site can live reload any code upon saving the file, so make sure any Python is syntactically correct. Use `isort` followed by `black -S` for code styling.
