@@ -1,12 +1,13 @@
 from secrets import token_urlsafe
 
-from flask_login import LoginManager
 from argon2 import PasswordHasher
 from flask import Flask
+from flask_login import LoginManager
 from flask_wtf import CSRFProtect
 
 login_manager = LoginManager()
 password_hasher = PasswordHasher()
+
 
 def create_app():
     app = Flask(__name__)
