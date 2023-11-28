@@ -6,7 +6,6 @@ from flask import Request
 from flask_login import UserMixin
 
 from .. import login_manager, password_hasher
-from .db_utils import get_user_data_by_email
 
 
 @dataclass
@@ -19,6 +18,8 @@ class User(UserMixin):
 
 @login_manager.user_loader
 def user_loader(email: str) -> User | None:
+    from .db_utils import get_user_data_by_email
+
     if user_data := get_user_data_by_email(email):
         user = User(**user_data)
         return user
@@ -27,6 +28,8 @@ def user_loader(email: str) -> User | None:
 
 @login_manager.request_loader
 def request_loader(request: Request) -> User | None:
+    from .db_utils import get_user_data_by_email
+
     email = request.form.get('email')
     if email is None:
         return None
