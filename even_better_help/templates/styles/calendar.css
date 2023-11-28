@@ -1,0 +1,17 @@
+.btn-day {
+    width: 4rem; 
+    height: 4rem; 
+    
+}
+
+.grid-fix {
+    flex-grow: 0;
+}
+
+.btn-circle {
+
+
+    border-radius: 60px;
+    font-size: 15px;
+    text-align: center;
+}
