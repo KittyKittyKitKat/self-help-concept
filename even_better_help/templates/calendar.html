@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!--Personalized CSS buttons-->
-    <link rel="stylesheet" href="styles/calendar.css">
-    <script type="text/JavaScript" src="scripts/calendar.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
+    <script type="text/JavaScript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
 
 </head>
 
@@ -65,7 +65,7 @@
             flex-grow: 0;
         }
     </style>
-        
+
     <script>
         update_dates();
         generate_grid();
