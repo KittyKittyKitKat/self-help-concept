@@ -17,6 +17,7 @@
 </head>
 
 <body>
+
     <!-- Modal -->
     <form>
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -40,12 +41,30 @@
         </div>
     </form>
 
-    <!--End of Modal-->
+     
 
+   
+
+    <!--End of Modal-->
+    
     <div class="mt-5 pt-5 text-center" id="grid-anchor" style="max-width: 60%; margin: auto;">
         <H2 class="fs-1 fw-bold text-left" id="year_entry">Year</H2>
         <H2 class="fs-1 fw-bold text-left" id="month_entry">Month</H2>
+        <div class="container">
+            <div class="row ">
+                <div class="col-2">
+                    <button class="btn" onclick="go_back()">Back</button>
+                </div>
+                <div class="col-2 text-right">
+                    <button class="btn" onclick="go_forward()">Next</button>
+                </div>
+            </div>
+        </div>
+
+        
     </div>
+
+    <br>
 
     <!-- Bootstrap JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
@@ -67,7 +86,6 @@
     </style>
         
     <script>
-        update_dates();
         generate_grid();
     </script>
 
