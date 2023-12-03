@@ -11,6 +11,7 @@ password_hasher = PasswordHasher()
 
 def create_app():
     app = Flask(__name__)
+    app.jinja_env.add_extension('jinja2.ext.do')
     # csrf = CSRFProtect(app)
     # app.config['CSRF'] = csrf
     app.secret_key = token_urlsafe(32)  # TODO: extract into config file

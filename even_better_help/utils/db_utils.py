@@ -1,5 +1,4 @@
 import sqlite3 as sql
-from datetime import date
 from pathlib import Path
 from typing import Any
 from uuid import uuid4 as create_uuid
@@ -8,8 +7,6 @@ from flask import current_app, g
 
 from .. import password_hasher
 from .user_model import User
-
-USER_TABLE_NAME_FORMAT = 'DATES:{}'
 
 
 def dict_factory(cursor, row):
@@ -91,8 +88,19 @@ def get_user_data_by_email(email: str) -> dict[str, Any] | None:
     cur = con.cursor()
 
     data = cur.execute(
-        'SELECT * FROM users WHERE Email = ?',
+        'SELECT * FROM users WHERE email = ?',
         (email,),
+    ).fetchone()
+    return data
+
+
+def get_user_data_by_uuid(uuid: str) -> dict[str, Any] | None:
+    con = get_db()
+    cur = con.cursor()
+
+    data = cur.execute(
+        'SELECT * FROM users WHERE uuid = ?',
+        (uuid,),
     ).fetchone()
     return data
 
@@ -108,30 +116,19 @@ def get_dates_data_by_user(user: User) -> list[dict[str, Any]]:
     return data
 
 
-def add_date_data_to_user(user: User, date: date, entry_text: str) -> None:
+def add_date_data_to_user(
+    user: User, month: int, day: int, year: int, entry_text: str
+) -> None:
     con = get_db()
     cur = con.cursor()
 
     cur.execute(
-        'UPDATE dates SET entry_text = ? WHERE uuid = ? AND date = ?',
-        (
-            entry_text,
-            user.uuid,
-            str(date),
-        ),
-    )
-    con.commit()
-
-
-def add_date_data_to_user(user: User, date: date, entry_text: str) -> None:
-    con = get_db()
-    cur = con.cursor()
-
-    cur.execute(
-        'INSERT INTO dates VALUES(?, ?, ?);',
+        'INSERT OR REPLACE INTO dates VALUES(?, ?, ?, ?, ?);',
         (
             user.uuid,
-            str(date),
+            month,
+            day,
+            year,
             entry_text,
         ),
     )

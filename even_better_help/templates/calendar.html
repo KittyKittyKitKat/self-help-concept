@@ -2,61 +2,151 @@
 
 {% block extra_head %}
 <style>
-    .month-txt {
-        font: optional;
-    }
+  .btn-day {
+      width: 4rem;
+      height: 4rem;
 
-    .grid-fix {
-        flex-grow: 0;
-    }
+  }
+
+  .grid-fix {
+      flex-grow: 0;
+  }
+
+  .btn-circle {
+      border-radius: 60px;
+      font-size: 18px;
+      text-align: center;
+  }
 </style>
-<!--Personalized CSS buttons-->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/calendar.css') }}">
-<script type="text/JavaScript" src="{{ url_for('static', filename='js/calendar.js') }}"></script>
-{% endblock %}
+{% endblock extra_head %}
 
 {% block content %}
-<!-- Modal -->
-<form>
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Today's Journal</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="form-floating">
-                    <textarea class="form-control" placeholder="Write today's journal entry here."
-                        id="journal_entry"></textarea>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save Entry</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</form>
-<!--End of Modal-->
+<div class="container-fluid text-center">
+  {% do calendar.setfirstweekday(6) %}
 
-<div class="mt-5 pt-5 text-center" id="grid-anchor" style="max-width: 60%; margin: auto;">
-    <H2 class="fs-1 fw-bold text-left" id="year_entry">Year</H2>
-    <H2 class="fs-1 fw-bold text-left" id="month_entry">Month</H2>
-    <div class="container">
-        <div class="row ">
-            <div class="col-2">
-                <button class="btn" onclick="go_back()">Back</button>
-            </div>
-            <div class="col-2 text-right">
-                <button class="btn" onclick="go_forward()">Next</button>
-            </div>
-        </div>
+  {% set prev_month = month - 1 %}
+  {% set prev_year = year %}
+  {% if prev_month == 0 %}
+    {% set prev_month = 12 %}
+    {% set prev_year = year - 1 %}
+  {% endif %}
+
+  {% set next_month = month + 1 %}
+  {% set next_year = year %}
+  {% if next_month == 13 %}
+    {% set next_month = 1 %}
+    {% set next_year = year + 1 %}
+  {% endif %}
+
+  <div class="row justify-content-center align-items-center mt-3">
+    <div class="col">
+      <button class="btn btn-secondary" onclick="window.location.replace('{{ url_for('core.calendar', year=prev_year, month=prev_month) }}');">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M12.5 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5M10 8a.5.5 0 0 1-.5.5H3.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L3.707 7.5H9.5a.5.5 0 0 1 .5.5"/>
+        </svg>
+      </button>
     </div>
+    <div class="col">
+      <h1>{{ calendar.Month(month).name.title() }}, {{ year }}</h1>
+    </div>
+    <div class="col">
+      <button class="btn btn-secondary" onclick="window.location.replace('{{ url_for('core.calendar', year=next_year, month=next_month) }}');">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-right" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8m-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="row justify-content-around">
+    {% for weekday in calendar.weekheader(3).split() %}
+    <div class="col" style="font-size: 18px;">
+      {{ weekday }}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% for week in calendar.monthcalendar(year, month) %}
+  <div class="row justify-content-around">
+    {% for day in week %}
+    <div class="col">
+      {% if not day %}
+      <button class="btn btn-dark my-1 btn-day btn-circle" disabled>-</button>
+      {% else %}
+      <button
+        class="btn btn-dark my-1 btn-day btn-circle"
+        data-bs-mdy="{{month}}-{{day}}-{{year}}"
+        data-bs-toggle="modal"
+        data-bs-target="#journalModal"
+      >
+        {{ day }}
+      </button>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
 </div>
-<br>
-<script>
-    generate_grid();
-</script>
 
-{% endblock %}
+<div
+  class="modal fade"
+  id="journalModal"
+  tabindex="-1"
+  aria-labelledby="journalModalLabel"
+  aria-hidden="true"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+>
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="journalModalLabel">New Journal Entry</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="entry-form" method="POST">
+          {{ form.csrf_token() }}
+          {{ form.entry.label(class='form-label') }}
+          {{ form.entry(class='form-control mb-3', style='height: 500px') }}
+          {{ form.day_of_month(readonly=true) }}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" form="entry-form" class="btn btn-primary">Save Entry</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const dateInfoForUser = {{ user_journal_data|tojson }};
+
+  const journalModal = document.getElementById('journalModal')
+  if (journalModal) {
+    journalModal.addEventListener('show.bs.modal', event => {
+      const button = event.relatedTarget
+      const mdy = button.getAttribute('data-bs-mdy')
+      const day = mdy.split('-')[1];
+
+      const modalTitle = journalModal.querySelector('.modal-title')
+      modalTitle.textContent = `New Journal Entry for ${mdy}`
+
+      const dayOfMonthInput = document.getElementById('day_of_month');
+      dayOfMonthInput.value = day;
+
+      const entryInput = document.getElementById('entry');
+      entryForDay = dateInfoForUser.filter((word) => word['day'] == day);
+      if (entryForDay.length >= 1) {
+        entryInput.value = entryForDay[0].entry;
+      } else {
+        entryInput.value = '';
+      }
+
+    });
+  }
+</script>
+{% endblock content %}

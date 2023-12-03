@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import BooleanField, EmailField, PasswordField
+from wtforms.fields import EmailField, HiddenField, PasswordField, TextAreaField
 from wtforms.validators import EqualTo, InputRequired
 
 
@@ -23,14 +23,13 @@ class SignUpForm(FlaskForm):
         'Email Address',
         validators=[
             InputRequired(),
-            EqualTo('email_confirm_r', message='Emails must match'),
         ],
     )
     password = PasswordField(
         'Password',
         validators=[
             InputRequired(),
-            EqualTo('password_confirm_r', message='Passwords must match'),
+            EqualTo('password_confirm', message='Passwords must match'),
         ],
     )
     password_confirm = PasswordField(
@@ -39,3 +38,11 @@ class SignUpForm(FlaskForm):
             InputRequired(),
         ],
     )
+
+
+class JournalEntryForm(FlaskForm):
+    entry = TextAreaField(
+        'Today\'s Entry',
+        validators=[],
+    )
+    day_of_month = HiddenField()

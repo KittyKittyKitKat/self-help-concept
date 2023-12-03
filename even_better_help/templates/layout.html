@@ -20,31 +20,22 @@
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom" id="site-navbar">
       <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('core.home') }}">Even Better Help</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#nav-collapse"
-          aria-controls="nav-collapse"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="nav-collapse">
-          <ul class="navbar-nav mb-2 mb-lg-0 ms-auto">
-            {% if not current_user.is_authenticated %}
-            <li class="nav-item">
-              <a class="btn btn-outline-primary" href="{{ url_for('core.login') }}">Log In</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="btn btn-outline-primary" href="{{ url_for('core.logout') }}">Sign Out</a>
-            </li>
-            {% endif %}
-          </ul>
-        </div>
+        {% if not current_user.is_authenticated %}
+        <a class="navbar-brand" href="{{ url_for('core.login') }}">Even Better Help</a>
+        {% else %}
+        <a class="navbar-brand" href="{{ url_for('core.calendar') }}">Even Better Help</a>
+        {% endif %}
+        <ul class="navbar-nav mb-2 mb-lg-0 ms-auto">
+          {% if not current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="btn btn-outline-primary" href="{{ url_for('core.login') }}">Log In</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="btn btn-outline-primary" href="{{ url_for('core.logout') }}">Sign Out</a>
+          </li>
+          {% endif %}
+        </ul>
       </div>
     </nav>
     <div id="precontent">

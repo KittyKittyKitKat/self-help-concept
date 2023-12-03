@@ -9,28 +9,56 @@
 
 {% block content %}
 <div class="mt-5 pt-5 text-center" style="max-width: 60%; margin: auto;">
-    <div class="row">
-        <div class="col-21 col-sm-8 col-md-6 m-auto">
-            <div class="card border-0 shadow">
-                <div class="card-body">
-                    <div class="text-center">
-                        <img src="img/uglyfuckencat.png" class=" float-start pb-3" style="width: 20%;">
-                        <form action="">
-                            <input type="text" class="form-control mb-3 my-2 py-2" id="TO-DO" placeholder="Name">
-                            <input type="email" class="form-control mb-3 my-2 py-2" id="TO-DO" placeholder="Email">
-                            <input type="password" class="form-control mb-3 my-3 py-2" id="TO-DO"
-                                placeholder="Password">
-                            <input type="password" class="form-control mb-3 my-3 py-2" id="TO-DO"
-                                placeholder="Confirm Password">
-                            <button type="button" class="btn btn-darkmode mt-2 mb-1 mx-2">Sign Up</button>
-
-                            <a href="{{ url_for('core.login') }}" class="nav-link mt-2 link-success">Log In with
-                                Existing Account</a>
-                        </form>
-                    </div>
+  <div class="row">
+    <div class="col-21 col-sm-8 col-md-6 m-auto">
+      <div class="card border-0 shadow">
+        <div class="card-body">
+          <div class="text-center">
+            <form class="needs-validation" id="sign-in-form" method="POST" novalidate>
+              {{ form.csrf_token() }}
+              <div class="form-floating mb-3">
+                {{ form.email(class='form-control mb-3', placeholder='') }}
+                {{ form.email.label(class='form-label') }}
+                <div class="invalid-feedback">
+                  Please enter a valid email address
                 </div>
-            </div>
+              </div>
+              <div class="form-floating mb-3">
+                {{ form.password(class='form-control mb-3', placeholder='') }}
+                {{ form.password.label(class='form-label') }}
+              </div>
+              <div class="form-floating mb-3">
+                {{ form.password_confirm(class='form-control mb-3', placeholder='') }}
+                {{ form.password_confirm.label(class='form-label') }}
+              </div>
+              <button type="submit" class="btn btn-darkmode mt-2 mb-1 mx-2">Sign Up</button>
+              <a href="{{ url_for('core.login') }}" class="nav-link mt-2 link-success">Already have an account?</a>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+<script>
+  function validate_sign_in_form() {
+    const form = document.querySelector('#sign-in-form');
+    if (form === null) {
+      return;
+    }
+    form.addEventListener(
+      'submit',
+      event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      },
+      false,
+    );
+  }
+
+  validate_sign_in_form();
+</script>
 {% endblock content %}
