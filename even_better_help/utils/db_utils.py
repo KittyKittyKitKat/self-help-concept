@@ -18,14 +18,6 @@ def dict_factory(cursor, row):
     return d
 
 
-class UserLookUpError(Exception):
-    pass
-
-
-class UserAttributeError(Exception):
-    pass
-
-
 def get_db() -> sql.Connection:
     db: sql.Connection | None = getattr(g, '_database', None)
     if db is None:
@@ -36,7 +28,7 @@ def get_db() -> sql.Connection:
     return db
 
 
-def create_new_user(email: str, password: str, display_name: str):
+def create_new_user(email: str, password: str, display_name: str) -> None:
     """Creates a new user in the database.
 
     Arguments:
@@ -60,7 +52,7 @@ def create_new_user(email: str, password: str, display_name: str):
     con.commit()
 
 
-def update_user_email(user: User, new_email: str):
+def update_user_email(user: User, new_email: str) -> None:
     """Update a user's email."""
     con = get_db()
     cur = con.cursor()
@@ -69,7 +61,7 @@ def update_user_email(user: User, new_email: str):
     con.commit()
 
 
-def update_user_password(user: User, new_password: str):
+def update_user_password(user: User, new_password: str) -> None:
     """Update a user's password."""
     con = get_db()
     cur = con.cursor()
@@ -80,7 +72,7 @@ def update_user_password(user: User, new_password: str):
     con.commit()
 
 
-def update_user_display_name(user: User, new_display_name: str):
+def update_user_display_name(user: User, new_display_name: str) -> None:
     """Update a user's display name."""
     con = get_db()
     cur = con.cursor()
@@ -119,11 +111,43 @@ def add_date_data_to_user(user: User, date: date, entry_text: str) -> None:
     cur = con.cursor()
 
     cur.execute(
+        'UPDATE dates SET entry_text = ? WHERE uuid = ? AND date = ?',
+        (
+            entry_text,
+            user.uuid,
+            str(date),
+        ),
+    )
+    con.commit()
+
+
+def add_date_data_to_user(user: User, date: date, entry_text: str) -> None:
+    con = get_db()
+    cur = con.cursor()
+
+    cur.execute(
         'INSERT INTO dates VALUES(?, ?, ?);',
         (
             user.uuid,
             str(date),
             entry_text,
         ),
+    )
+    con.commit()
+
+
+def delete_user(user: User) -> None:
+    """Deletes a user from the database.
+
+    Arguments:
+        user: User to delete
+
+    """
+    con = get_db()
+    cur = con.cursor()
+
+    cur.execute(
+        'DELETE FROM users WHERE uuid = ?',
+        (user.uuid,),
     )
     con.commit()
