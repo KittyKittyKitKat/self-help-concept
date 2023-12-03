@@ -10,3 +10,13 @@ from datetime import date
 @core.route('/')
 def calendar():
     return render_template('calendar.html')
+
+
+@core.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+
+@core.route('/login')
+def login():
+    return render_template('login.html')
