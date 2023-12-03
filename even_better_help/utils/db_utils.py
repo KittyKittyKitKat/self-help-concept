@@ -6,6 +6,7 @@ from uuid import uuid4 as create_uuid
 
 from flask import current_app, g
 
+from .. import password_hasher
 from .user_model import User
 
 USER_TABLE_NAME_FORMAT = 'DATES:{}'
@@ -45,7 +46,7 @@ def create_new_user(email: str, password: str, display_name: str) -> None:
         (
             str(create_uuid()),
             email,
-            password,
+            password_hasher.hash(password),
             display_name,
         ),
     )
@@ -67,7 +68,8 @@ def update_user_password(user: User, new_password: str) -> None:
     cur = con.cursor()
 
     cur.execute(
-        'UPDATE users SET password = ? WHERE uuid = ?', (new_password, user.uuid)
+        'UPDATE users SET password = ? WHERE uuid = ?',
+        (password_hasher.hash(new_password), user.uuid),
     )
     con.commit()
 

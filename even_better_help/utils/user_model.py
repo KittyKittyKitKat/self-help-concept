@@ -7,7 +7,6 @@ from flask_login import UserMixin
 
 from .. import login_manager, password_hasher
 
-
 @dataclass
 class User(UserMixin):
     uuid: str
@@ -37,3 +36,15 @@ def request_loader(request: Request) -> User | None:
         user = User(**user_data)
         return user
     return None
+
+
+def validate_user_login(email: str, password: str) -> tuple[bool, str]:
+    from ..utils.db_utils import get_user_data_by_email
+    if (user_data := get_user_data_by_email(email)) is not None:
+        try:
+            password_hasher.verify(user_data['password'], password)
+        except VerifyMismatchError:
+            return (False, 'Incorrect Password')
+        else:
+            return (True, '')
+    return (False, 'Unrecognized Email')

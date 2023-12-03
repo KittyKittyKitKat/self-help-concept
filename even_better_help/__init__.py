@@ -14,7 +14,7 @@ def create_app():
     # csrf = CSRFProtect(app)
     # app.config['CSRF'] = csrf
     app.secret_key = token_urlsafe(32)  # TODO: extract into config file
-    # login_manager.init_app(app)
+    login_manager.init_app(app)
     from even_better_help.core.routes import core
     from even_better_help.errors.handlers import errors
 
