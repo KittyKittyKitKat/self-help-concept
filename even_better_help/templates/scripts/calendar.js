@@ -1,14 +1,38 @@
-function hello() {
-    console.log("hi");
-}
 
-//TO-DO: move globals up here
 const month_arr = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const month_len = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+// current calendar data
+let c_date = new Date();
+let c_year = c_date.getFullYear();
+let c_month = c_date.getMonth();
+let c_startday = start_date(c_year, c_month);
+let c_lastday = end_date(c_month);
 
 
+function start_date(year, month) {
+    let start_date = new Date(year, month, 1);
+    return start_date.getDay();
+}
+
+function end_date(month) {
+    return month_len[month]
+}
+
+
+/*
+Generate a grid of buttons for each day.
+*/
 function generate_grid() {
-    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    // check if grind-location exists
+
+    let new_grid = document.createElement("div");
+    new_grid.id = "grid-location";
+    document.getElementById("grid-anchor").appendChild(new_grid);
+    
+    document.getElementById("month_entry").innerHTML = month_arr[c_month];
+    document.getElementById("year_entry").innerHTML = c_year;
     let header = document.createElement("div");
     header.classList.add("row");
     for (let i = 0; i < 7; i++) {
@@ -17,47 +41,39 @@ function generate_grid() {
         header_col.innerHTML = days[i];
         header.appendChild(header_col);
     }
-    //TO-DO: clean this up
 
     let count = 0;
     let id = 0;
     let dummy = false;
 
-    document.getElementById("grid-anchor").appendChild(header)
-    for (let i = 0; i < 5; i++) { // need five rows to contain all possible days
+    new_grid.appendChild(header)
+    for (let i = 0; i < 6; i++) { // need five rows to contain all possible days
         let new_row = document.createElement("div");
-        new_row.classList.add("row");
-        for (let j = 0; j < 7; j++) { // need seven days per week (duh)
+        new_row.classList.add("row", "entry");
+        for (let j = 0; j < 7; j++) { 
             let new_col = document.createElement("div");
             new_col.classList.add("col", "grid-fix", "px-1");
-            if (count >= window.start_day && count < window.last_day + window.start_day) {
+            if (count >= start_date(c_year, c_month) && count < end_date(c_month) + start_date(c_year, c_month)) {
                 dummy = false;
                 id++;
             } else {
                 dummy = true;
             }
-            const day1 = "hello hewoo this is my day 1 and this should be extracted from a json";
-
             count++;
             btn = generate_day(new_col, id, dummy);
             new_col.appendChild(btn);
             new_row.appendChild(new_col);
         }
-        document.getElementById("grid-anchor").appendChild(new_row);
+        
+        new_grid.appendChild(new_row);
     }
 }
 
-function update_dates() {
-    let date = new Date();
-    window.year = date.getFullYear();
-    window.month = date.getMonth();
-    document.getElementById("month_entry").innerHTML = month_arr[window.month];
-    document.getElementById("year_entry").innerHTML = window.year;
-    let start_date = new Date(window.year, window.month, 1);
-    window.start_day = start_date.getDay();
-    window.last_day = month_len[window.month];
-
+function remove_grid() {
+    document.getElementById("grid-location").remove();
 }
+
+
 
 function generate_day(col, id, dummy) {
     let btn = document.createElement("button");
@@ -71,9 +87,8 @@ function generate_day(col, id, dummy) {
     btn.id = id - 1;
     if (dummy) {
         btn.disabled = true
-        btn.innerHTML = ":3";
+        btn.innerHTML = "";
     }
-
     return btn;
 }
 
@@ -82,4 +97,28 @@ function update_day(id) {
     document.getElementById("journal_entry").value = entry_arr[id];
 }
     
-hello();
+function go_forward() {
+    if (c_month == 11) {
+        c_month = 0;
+        c_year++;
+    }
+    else {
+        c_month++;
+    }
+
+    remove_grid();
+    generate_grid();
+}
+
+function go_back() {
+    if (c_month == 0) {
+        c_month = 11;
+        c_year--;
+    }
+    else {
+        c_month--;
+    }
+
+    remove_grid();
+    generate_grid();
+}
