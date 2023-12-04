@@ -1,17 +1,10 @@
 {% extends "layout.html" %}
 
-{% block extra_head %}
-<!--Dark-Mode CSS -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
-<!--Control Padding, Margin, and size CSS-->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/size-control.css') }}">
-{% endblock extra_head %}
-
 {% block content %}
 <div class="mt-5 pt-5 text-center" style="max-width: 60%; margin: auto;">
   <div class="row">
     <div class="col-21 col-sm-8 col-md-6 m-auto">
-      <div class="card border-0 shadow">
+      <div class="card shadow">
         <div class="card-body">
           <div class="text-center">
             <form class="needs-validation" id="sign-in-form" method="POST" novalidate>
@@ -31,8 +24,8 @@
                 {{ form.password_confirm(class='form-control mb-3', placeholder='') }}
                 {{ form.password_confirm.label(class='form-label') }}
               </div>
-              <button type="submit" class="btn btn-darkmode mt-2 mb-1 mx-2">Sign Up</button>
-              <a href="{{ url_for('core.login') }}" class="nav-link mt-2 link-success">Already have an account?</a>
+              <button type="submit" class="btn btn-success mt-2 mb-1 mx-2">Sign Up</button>
+              <a href="{{ url_for('core.login') }}" class="nav-link mt-2">Already have an account?</a>
             </form>
           </div>
         </div>

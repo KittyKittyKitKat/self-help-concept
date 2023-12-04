@@ -7,11 +7,6 @@
       height: 4rem;
 
   }
-
-  .grid-fix {
-      flex-grow: 0;
-  }
-
   .btn-circle {
       border-radius: 60px;
       font-size: 18px;
@@ -73,10 +68,10 @@
     {% for day in week %}
     <div class="col">
       {% if not day %}
-      <button class="btn btn-dark my-1 btn-day btn-circle" disabled>-</button>
+      <button class="btn btn-success my-1 btn-day btn-circle" disabled>-</button>
       {% else %}
       <button
-        class="btn btn-dark my-1 btn-day btn-circle"
+        class="btn btn-success my-1 btn-day btn-circle"
         data-bs-mdy="{{month}}-{{day}}-{{year}}"
         data-bs-toggle="modal"
         data-bs-target="#journalModal"
@@ -112,11 +107,13 @@
           {{ form.entry.label(class='form-label') }}
           {{ form.entry(class='form-control mb-3', style='height: 500px') }}
           {{ form.day_of_month(readonly=true) }}
+          <small>Be careful! Drafts are lost when you leave or refresh the page.</small>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="submit" form="entry-form" class="btn btn-primary">Save Entry</button>
+        <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal">Close</button>
+        <button type="button" form="entry-form" class="btn btn-outline-success" onclick="save_draft();" data-bs-dismiss="modal">Save Draft</button>
+        <button type="submit" form="entry-form" class="btn btn-success" onclick="clear_draft();">Save Entry</button>
       </div>
     </div>
   </div>
@@ -125,11 +122,15 @@
 <script>
   const dateInfoForUser = {{ user_journal_data|tojson }};
 
+  let drafts = {};
+  let current_date = undefined;
+
   const journalModal = document.getElementById('journalModal')
   if (journalModal) {
     journalModal.addEventListener('show.bs.modal', event => {
       const button = event.relatedTarget
       const mdy = button.getAttribute('data-bs-mdy')
+      current_date = mdy;
       const day = mdy.split('-')[1];
 
       const modalTitle = journalModal.querySelector('.modal-title')
@@ -142,11 +143,21 @@
       entryForDay = dateInfoForUser.filter((word) => word['day'] == day);
       if (entryForDay.length >= 1) {
         entryInput.value = entryForDay[0].entry;
+      } else if (mdy in drafts) {
+          entryInput.value = drafts[mdy];
       } else {
         entryInput.value = '';
       }
 
     });
+  }
+
+  function save_draft() {
+    drafts[current_date] = document.getElementById('entry').value;
+  }
+
+  function clear_draft() {
+    delete drafts[current_date];
   }
 </script>
 {% endblock content %}

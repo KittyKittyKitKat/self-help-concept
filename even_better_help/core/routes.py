@@ -29,13 +29,6 @@ def calendar() -> str:
     except ValueError:
         abort(404)
 
-    user_journal_data = list(
-        filter(
-            lambda r: r['year'] == year and r['month'] == month,
-            get_dates_data_by_user(current_user),
-        )
-    )
-
     journal_entry_form = JournalEntryForm()
     if journal_entry_form.validate_on_submit():
         add_date_data_to_user(
@@ -45,6 +38,13 @@ def calendar() -> str:
             year,
             journal_entry_form.entry.data,
         )
+
+    user_journal_data = list(
+        filter(
+            lambda r: r['year'] == year and r['month'] == month,
+            get_dates_data_by_user(current_user),
+        )
+    )
 
     return render_template(
         'calendar.html',
@@ -67,13 +67,11 @@ def signup() -> str:
             sign_up_form.password.data,
             sign_up_form.email.data,
         )
-        login_user(
-            User(
-                **get_user_data_by_email(
-                    sign_up_form.email.data
-                )
-            )
-        )
+        login_user(User(**get_user_data_by_email(sign_up_form.email.data)))
+        flash('Signed up successfully', category='success')
+
+    elif sign_up_form.is_submitted():
+        flash(f'Something went wrong trying to sign you up.', category='danger')
 
     return render_template('signup.html', form=sign_up_form)
 
@@ -91,7 +89,7 @@ def login() -> str:
             # database, so get_user_data_by_email be not None
             user = User(**get_user_data_by_email(email))  # type: ignore
             if login_user(user):
-                flash('Signed in successfully', category='info')
+                flash('Signed in successfully', category='success')
                 return redirect(url_for('core.calendar'))
             else:
                 flash('Signed in failed', category='danger')
@@ -108,5 +106,5 @@ def login() -> str:
 def logout() -> str:
     if current_user.is_authenticated:
         logout_user()
-        flash('Signed out successfully', category='info')
+        flash('Signed out successfully', category='success')
     return redirect(url_for('core.login'))
