@@ -70,6 +70,16 @@
       {% if not day %}
       <button class="btn btn-success my-1 btn-day btn-circle" disabled>-</button>
       {% else %}
+      {% if (year ~ '-' ~ ('%02d' % month) ~ '-' ~ ('%02d' % day)) == today %}
+        <button
+          class="btn btn-danger my-1 btn-day btn-circle"
+          data-bs-mdy="{{month}}-{{day}}-{{year}}"
+          data-bs-toggle="modal"
+          data-bs-target="#journalModal"
+        >
+        {{ day }}
+      </button>
+      {% else %}
       <button
         class="btn btn-success my-1 btn-day btn-circle"
         data-bs-mdy="{{month}}-{{day}}-{{year}}"
@@ -78,6 +88,7 @@
       >
         {{ day }}
       </button>
+      {% endif %}
       {% endif %}
     </div>
     {% endfor %}

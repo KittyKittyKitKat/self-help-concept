@@ -51,6 +51,7 @@ def calendar() -> str:
         calendar=calendar_py,
         year=year,
         month=month,
+        today=str(date.today()),
         form=journal_entry_form,
         user_journal_data=user_journal_data,
     )
